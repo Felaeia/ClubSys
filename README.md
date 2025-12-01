@@ -63,12 +63,12 @@ This diagram illustrates the flow of data between the frontend, backend, databas
 
 ```mermaid
 graph TD
-    subgraph External Systems
+    subgraph "External Systems"
         U(👨 User);
         IOT[⚡️ IoT Device];
     end
 
-    subgraph Frontend (Vue.js App in Browser)
+    subgraph "Frontend (Vue.js App)"
         direction LR
         LP[Login Page];
         DB[Dashboard];
@@ -78,7 +78,7 @@ graph TD
         FIN[Budget Request Page];
     end
 
-    subgraph Backend (.NET API Server)
+    subgraph "Backend (.NET API)"
         direction LR
         AUTH[Auth Controller];
         TREE[Org TreeController];
@@ -89,7 +89,7 @@ graph TD
         SR_HUB[📡 SignalR Hub];
     end
 
-    subgraph Data Stores (MS SQL Server)
+    subgraph "Data Stores (MS SQL)"
         direction LR
         UsersTbl[(Users)];
         TreeNodesTbl[(TreeNodes)];
