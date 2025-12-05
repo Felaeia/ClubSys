@@ -47,11 +47,11 @@ GO
 CREATE TABLE Users (
     UserID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     StudentID NVARCHAR(50) NOT NULL UNIQUE,
-    FullName NVARCHAR(100) NOT NULL,
+    UserName NVARCHAR(100) NOT NULL,
     Email NVARCHAR(100) NOT NULL UNIQUE,
     PasswordHash NVARCHAR(MAX) NOT NULL,
     GlobalRole NVARCHAR(20) NOT NULL CHECK (GlobalRole IN ('Admin', 'Student')),
-    CreatedAt DATETIME2 DEFAULT GETDATE()
+    CreatedOn DATETIMEOFFSET NOT NULL DEFAULT SYSDATETIMEOFFSET()
 );
 
 CREATE TABLE Organizations (
@@ -61,7 +61,7 @@ CREATE TABLE Organizations (
     OrgType NVARCHAR(20) NOT NULL CHECK (OrgType IN ('Academic', 'Non-Academic')),
     TotalBalance DECIMAL(18, 2) DEFAULT 0.00, -- The Main Wallet
     IsActive BIT DEFAULT 1,
-    CreatedAt DATETIME2 DEFAULT GETDATE()
+    CreatedOn DATETIMEOFFSET NOT NULL DEFAULT SYSDATETIMEOFFSET()
 );
 
 CREATE TABLE OrgMemberships (
@@ -112,7 +112,7 @@ CREATE TABLE Proposals (
     ProposalType NVARCHAR(50) NOT NULL CHECK (ProposalType IN ('StructureChange', 'BudgetRelease', 'EventApproval')),
     Status NVARCHAR(20) NOT NULL CHECK (Status IN ('Pending_Vote', 'Approved', 'Rejected')),
     DataPayload NVARCHAR(MAX) NULL, -- JSON details of the proposal
-    CreatedAt DATETIME2 DEFAULT GETDATE()
+    CreatedOn DATETIMEOFFSET NOT NULL DEFAULT SYSDATETIMEOFFSET()
 );
 
 CREATE TABLE Votes (
@@ -184,7 +184,7 @@ CREATE TABLE Notifications (
     Message NVARCHAR(MAX) NOT NULL,
     RelatedEntityID INT NULL, -- ID of the Event/Proposal
     IsRead BIT DEFAULT 0,
-    CreatedAt DATETIME2 DEFAULT GETDATE()
+    CreatedOn DATETIMEOFFSET NOT NULL DEFAULT SYSDATETIMEOFFSET()
 );
 
 CREATE TABLE Announcements (
@@ -208,7 +208,7 @@ CREATE TABLE BudgetRequests (
     EventID INT FOREIGN KEY REFERENCES Events(EventID) NULL, -- Usually linked to an event
     AmountRequested DECIMAL(18, 2) NOT NULL,
     Status NVARCHAR(20) NOT NULL CHECK (Status IN ('Pending_Audit', 'Pending_Vote', 'Approved', 'Liquidated', 'Rejected')),
-    CreatedAt DATETIME2 DEFAULT GETDATE()
+    CreatedOn DATETIMEOFFSET NOT NULL DEFAULT SYSDATETIMEOFFSET()
 );
 
 CREATE TABLE BudgetLineItems (
