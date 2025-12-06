@@ -1,4 +1,6 @@
 using ClubSys.Extensions;
+using ClubSys.Infastructure.Middleware;
+using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,14 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+#region Database Development Sqlite Setup Connection to RAM(ONLY FOR DEVELOPMENT)
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ClubSys.Infastructure.Data.ClubSysDbContext>();
+    dbContext.Database.EnsureCreated();
+}
+#endregion
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -20,7 +30,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

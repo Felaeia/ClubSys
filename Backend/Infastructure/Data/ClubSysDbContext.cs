@@ -15,7 +15,7 @@ namespace ClubSys.Infastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            // Apply User entity configuration
+            // Apply User 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ClubSysDbContext).Assembly);
         }
     }

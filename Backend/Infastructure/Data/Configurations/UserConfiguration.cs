@@ -1,9 +1,10 @@
 ﻿using ClubSys.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ClubSys.Infastructure.Data.Configurations
 {
-    public class UserConfiguration
+    public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
@@ -11,8 +12,10 @@ namespace ClubSys.Infastructure.Data.Configurations
             builder.HasKey(u => u.UserId);
             
             // Unique Constraints
-            builder.HasIndex(u => u.StudentId).IsUnique();
-            builder.HasIndex(u => u.Email).IsUnique();
+            builder.HasIndex(u => u.StudentId)
+                    .IsUnique();
+            builder.HasIndex(u => u.Email)
+                    .IsUnique();
 
             // Propery Configurations
             builder.Property(u => u.UserName)

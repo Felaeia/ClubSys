@@ -3,16 +3,19 @@ using MediatR;
 using ClubSys.Domain.Entities;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace ClubSys.Features.Users.CreateUsers
 {
     public class CreateUserHandler : IRequestHandler<CreateUserCmd, CreateUserResponse>
     {
         private readonly ClubSysDbContext _dbContext;
+        private readonly IMemoryCache _cache;
 
-        public CreateUserHandler(ClubSysDbContext dbContext)
+        public CreateUserHandler(ClubSysDbContext dbContext, IMemoryCache cache)
         {
             _dbContext = dbContext;
+            _cache = cache;
         }
 
         public async Task<CreateUserResponse> Handle(CreateUserCmd request, CancellationToken cancellationToken)
@@ -32,6 +35,8 @@ namespace ClubSys.Features.Users.CreateUsers
             };
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            _cache.Remove("GetAllUsers");
 
             return new CreateUserResponse
             {
