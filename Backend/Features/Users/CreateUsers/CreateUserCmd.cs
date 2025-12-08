@@ -1,4 +1,4 @@
-﻿using ClubSys.Domain.Entities;
+﻿using ClubSys.Domain.Enums;
 using MediatR;
 
 namespace ClubSys.Features.Users.CreateUsers

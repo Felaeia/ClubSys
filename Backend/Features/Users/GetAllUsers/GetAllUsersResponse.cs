@@ -1,4 +1,4 @@
-﻿using ClubSys.Domain.Entities;
+﻿using ClubSys.Domain.Enums;
 
 namespace ClubSys.Features.Users.GetAllUsers
 {

@@ -11,12 +11,17 @@ namespace ClubSys.Infastructure.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            // Apply User 
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ClubSysDbContext).Assembly);
+
+            modelBuilder.Entity<ChatMessage>()
+                .Property(e => e.Role)
+                .HasConversion<string>(); // Automatically converts Enum <-> String for DB
         }
     }
 }

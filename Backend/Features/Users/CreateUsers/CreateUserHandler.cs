@@ -4,6 +4,7 @@ using ClubSys.Domain.Entities;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Caching.Memory;
+using ClubSys.Features.Users.Events;
 
 namespace ClubSys.Features.Users.CreateUsers
 {
@@ -11,11 +12,13 @@ namespace ClubSys.Features.Users.CreateUsers
     {
         private readonly ClubSysDbContext _dbContext;
         private readonly IMemoryCache _cache;
+        private readonly IMediator _mediator;
 
-        public CreateUserHandler(ClubSysDbContext dbContext, IMemoryCache cache)
+        public CreateUserHandler(ClubSysDbContext dbContext, IMemoryCache cache, IMediator mediator)
         {
             _dbContext = dbContext;
             _cache = cache;
+            _mediator = mediator;
         }
 
         public async Task<CreateUserResponse> Handle(CreateUserCmd request, CancellationToken cancellationToken)
@@ -35,7 +38,9 @@ namespace ClubSys.Features.Users.CreateUsers
             };
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            await _mediator.Publish(new UserCreatedEvent(user.UserId, user.UserName, user.CreatedOn));
 
+            // Remove cached list of users during Creation of new User.
             _cache.Remove("GetAllUsers");
 
             return new CreateUserResponse

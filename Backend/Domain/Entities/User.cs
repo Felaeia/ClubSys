@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ClubSys.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace ClubSys.Domain.Entities
 {

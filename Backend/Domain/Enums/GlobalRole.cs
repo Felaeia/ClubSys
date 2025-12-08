@@ -1,8 +1,8 @@
-﻿namespace ClubSys.Domain.Entities
+﻿namespace ClubSys.Domain.Enums
 {
     public enum GlobalRole
     {
         Student,
-        Admin
+        Admin,
     }
 }

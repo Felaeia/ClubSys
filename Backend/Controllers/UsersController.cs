@@ -41,6 +41,10 @@ namespace ClubSys.Controllers
         {
             var query = new GetAllUsersQuery();
             var result = await _mediator.Send(query);
+            if (result is null)
+            {
+                return NotFound();
+            }
             return Ok(result);
         }
     }

@@ -1,4 +1,4 @@
-﻿using ClubSys.Domain.Entities;
+﻿using ClubSys.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace ClubSys.Features.Users.GetUsersById

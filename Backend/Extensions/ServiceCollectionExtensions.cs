@@ -1,4 +1,5 @@
-﻿using ClubSys.Infastructure.Behaviors;
+﻿using ClubSys.Features.Agent.Common;
+using ClubSys.Infastructure.Behaviors;
 using ClubSys.Infastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -27,15 +28,30 @@ namespace ClubSys.Extensions
                 {
                     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
 
-                    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+                    //cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
                     cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
                 });
+
             // For In-Memory Database (ONLY FOR TESTING PURPOSES)
             //services.AddDbContext<ClubSysDbContext>(options => options.UseInMemoryDatabase("ClubSysDb"));
+
             services.AddValidatorsFromAssemblyContaining<Program>();
             services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
             services.AddMemoryCache();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowVueDevServer",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:5173")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
 
+            //Service Classes for Testing Cause I havent Added it to MediatR Yet xD
+            services.AddScoped<GetGeminiApiKey>();
+            services.AddScoped<GetRoleForAgent>();
 
             return services;
         }

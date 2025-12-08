@@ -1,6 +1,8 @@
 using ClubSys.Extensions;
-using ClubSys.Infastructure.Middleware;
-using Microsoft.Data.Sqlite;
+using DotNetEnv;
+
+// Load environment variables from .env file
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,8 @@ using (var scope = app.Services.CreateScope())
 }
 #endregion
 
+app.UseCors("AllowVueDevServer");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -30,7 +34,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+//app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,4 +1,5 @@
 ﻿using ClubSys.Domain.Entities;
+using ClubSys.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
