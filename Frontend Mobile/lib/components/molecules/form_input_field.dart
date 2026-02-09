@@ -1,0 +1,1 @@
+//A Label + a TextField + an Icon combined
