@@ -1,6 +1,7 @@
 ﻿using ClubSys.Features.Users.CreateUsers;
 using ClubSys.Features.Users.GetAllUsers;
 using ClubSys.Features.Users.GetUsersById;
+using ClubSys.Features.Users.UpdateUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,6 +46,13 @@ namespace ClubSys.Controllers
             {
                 return NotFound();
             }
+            return Ok(result);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<UpdateUserNameResponse>> UpdateUserName([FromBody] UpdateUseNameCmd cmd)
+        {
+            var result = await _mediator.Send(cmd);
             return Ok(result);
         }
     }
