@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-// Import all your screen files
 import 'screens/welcome_screen.dart';
 import 'screens/announcement_screen.dart';
 import 'screens/merit_screen.dart';
