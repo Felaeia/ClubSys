@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Import all your screen files
 import 'screens/welcome_screen.dart';
 import 'screens/announcement_screen.dart';
 import 'screens/merit_screen.dart';
@@ -39,7 +38,7 @@ class MyApp extends StatelessWidget {
         '/shop': (context) => const ShopScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/qr_scanner': (context) => const QrScannerScreen(),
-        '/login': (context) => const WelcomeScreen(), // Redirect logout back to start
+        '/login': (context) => const WelcomeScreen(), 
       },
     );
   }
