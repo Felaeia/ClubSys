@@ -416,3 +416,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# iOS generated build files
+**/ios/Flutter/ephemeral/
+Frontend Mobile/ios/Flutter/flutter_export_environment.sh
+Frontend Mobile/ios/Flutter/Generated.xcconfig
