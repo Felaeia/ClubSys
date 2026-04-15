@@ -439,3 +439,5 @@ dist-ssr
 **/ios/Flutter/ephemeral/
 Frontend Mobile/ios/Flutter/flutter_export_environment.sh
 Frontend Mobile/ios/Flutter/Generated.xcconfig
+Prompts/CommitMessage.txt
+Frontend Mobile/macos/Flutter/ephemeral/Flutter-Generated.xcconfig
