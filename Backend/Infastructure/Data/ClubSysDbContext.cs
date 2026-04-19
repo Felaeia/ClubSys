@@ -1,4 +1,5 @@
 ﻿using ClubSys.Domain.Entities;
+using ClubSys.Domain.Entities.System;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClubSys.Infastructure.Data

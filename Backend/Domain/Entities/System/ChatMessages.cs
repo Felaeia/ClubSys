@@ -1,6 +1,6 @@
 ﻿using ClubSys.Domain.Enums;
 
-namespace ClubSys.Domain.Entities
+namespace ClubSys.Domain.Entities.System
 {
     public class ChatMessage
     {

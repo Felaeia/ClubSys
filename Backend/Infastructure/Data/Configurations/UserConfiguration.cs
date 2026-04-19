@@ -10,7 +10,7 @@ namespace ClubSys.Infastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             // Primary Key
-            builder.HasKey(u => u.UserId);
+            builder.HasKey(u => u.Id);
             
             // Unique Constraints
             builder.HasIndex(u => u.StudentId)

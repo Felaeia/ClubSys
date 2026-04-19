@@ -16,7 +16,7 @@ namespace ClubSys.Features.Users.CreateUsers
 
         public CreateUserHandler(ClubSysDbContext dbContext, IMemoryCache cache, IMediator mediator)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext; 
             _cache = cache;
             _mediator = mediator;
         }
@@ -27,7 +27,7 @@ namespace ClubSys.Features.Users.CreateUsers
 
             var user = new User
             {
-                UserId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 StudentId = request.StudentId,
                 UserName = request.UserName,
                 Email = request.Email,
@@ -38,14 +38,14 @@ namespace ClubSys.Features.Users.CreateUsers
             };
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            await _mediator.Publish(new UserCreatedEvent(user.UserId, user.UserName, user.CreatedOn));
+            await _mediator.Publish(new UserCreatedEvent(user.Id, user.UserName, user.CreatedOn));
 
             // Remove cached list of users during Creation of new User.
             _cache.Remove("GetAllUsers");
 
             return new CreateUserResponse
             {
-                UserId = user.UserId,
+                UserId = user.Id,
                 StudentId = user.StudentId,
                 UserName = user.UserName,
                 Email = user.Email,

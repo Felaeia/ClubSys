@@ -32,14 +32,14 @@ namespace ClubSys.Features.Users.UpdateUser
             user.UserName = request.UserName;
 
             await _dbContext.SaveChangesAsync(cacellationToken);
-            await _mediator.Publish(new UpdateUserNameEvent(user.UserId, user.UserName, DateTimeOffset.UtcNow), cacellationToken);
+            await _mediator.Publish(new UpdateUserNameEvent(user.Id, user.UserName, DateTimeOffset.UtcNow), cacellationToken);
 
             // Remove cached list of users during Update of User.
             _cache.Remove("GetAllUsers");
 
             return new UpdateUserNameResponse
             {
-                UserId = user.UserId,
+                UserId = user.Id,
                 UserName = user.UserName,
                 //UpdatedOn = DateTimeOffset.UtcNow
             };

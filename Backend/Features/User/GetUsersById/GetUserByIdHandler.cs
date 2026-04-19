@@ -28,7 +28,7 @@ namespace ClubSys.Features.Users.GetUsersById
                 return cachedUser.FirstOrDefault();
             }
 
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == request.userId, cancellationToken);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == request.userId, cancellationToken);
 
             if (user == null) return null;
             
