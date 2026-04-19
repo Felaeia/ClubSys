@@ -12,6 +12,7 @@ namespace ClubSys.Infastructure.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<House> Houses { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
