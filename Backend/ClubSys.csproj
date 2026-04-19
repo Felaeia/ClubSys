@@ -33,7 +33,9 @@
 
   <ItemGroup>
     <Folder Include="Features\Agent\Events\" />
-    <Folder Include="Features\House\" />
+    <Folder Include="Features\House\CreateHouse\" />
+    <Folder Include="Features\User\AdminUpdateUser\" />
+    <Folder Include="Features\User\UpdateUserSettingSecurity\" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,8 @@
 using ClubSys.Features.Users.GetAllUsers;
 using ClubSys.Features.Users.GetUsersById;
 using ClubSys.Features.Users.UpdateUser;
+using ClubSys.Features.Users.UpdateUserSettingSecurity;
+using ClubSys.Features.Users.AdminUpdateUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,7 +52,21 @@ namespace ClubSys.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<UpdateUserNameResponse>> UpdateUserName([FromBody] UpdateUseNameCmd cmd)
+        public async Task<ActionResult<UpdateUserSettingsResponse>> UpdateUserSettings([FromBody] UpdateUserSettingsCmd cmd)
+        {
+            var result = await _mediator.Send(cmd);
+            return Ok(result);
+        }
+
+        [HttpPut("security")]
+        public async Task<ActionResult<UpdateUserSettingSecurityResponse>> UpdateUserSettingSecurity([FromBody] UpdateUserSettingSecurityCmd cmd)
+        {
+            var result = await _mediator.Send(cmd);
+            return Ok(result);
+        }
+
+        [HttpPut("admin")]
+        public async Task<ActionResult<AdminUpdateUserResponse>> AdminUpdateUser([FromBody] AdminUpdateUserCmd cmd)
         {
             var result = await _mediator.Send(cmd);
             return Ok(result);

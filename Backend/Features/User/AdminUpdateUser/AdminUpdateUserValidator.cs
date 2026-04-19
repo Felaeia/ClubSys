@@ -1,15 +1,18 @@
 using FluentValidation;
 
-namespace ClubSys.Features.Users.CreateUsers
+namespace ClubSys.Features.Users.AdminUpdateUser
 {
     /// <summary>
-    /// Validator for the CreateUserCmd.
-    /// Implements strong password requirements and data consistency checks.
+    /// Validator for administrative user updates.
+    /// Includes validation for all sensitive fields that admins are allowed to modify.
     /// </summary>
-    public class CreateUserValidator : AbstractValidator<CreateUserCmd>
+    public class AdminUpdateUserValidator : AbstractValidator<AdminUpdateUserCmd>
     {
-        public CreateUserValidator()
+        public AdminUpdateUserValidator()
         {
+            RuleFor(x => x.UserId)
+                .NotEmpty().WithMessage("User ID is required.");
+
             RuleFor(x => x.HouseId)
                 .NotEmpty().WithMessage("House ID is required.");
 
@@ -31,18 +34,6 @@ namespace ClubSys.Features.Users.CreateUsers
             RuleFor(x => x.Course)
                 .NotEmpty().WithMessage("Course is required.")
                 .MaximumLength(100).WithMessage("Course cannot exceed 100 characters.");
-
-            RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.")
-                .MinimumLength(8).WithMessage("Password must be at least 8 characters long.")
-                .Matches(@"[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
-                .Matches(@"[a-z]").WithMessage("Password must contain at least one lowercase letter.")
-                .Matches(@"[0-9]").WithMessage("Password must contain at least one number.")
-                .Matches(@"[^a-zA-Z0-9]").WithMessage("Password must contain at least one special character.");
-
-            RuleFor(x => x.ConfirmPassword)
-                .NotEmpty().WithMessage("Please confirm your password.")
-                .Equal(x => x.Password).WithMessage("The password and confirmation password do not match.");
 
             RuleFor(x => x.GlobalRole)
                 .IsInEnum().WithMessage("Global role must be a valid value.");
