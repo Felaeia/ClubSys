@@ -7,6 +7,7 @@ import 'screens/profile_screen.dart';
 import 'screens/shop_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/qr_scanner_screen.dart';
+import 'screens/transaction_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
         '/shop': (context) => const ShopScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/qr_scanner': (context) => const QrScannerScreen(),
-        '/login': (context) => const WelcomeScreen(), // Redirect logout back to start
+        '/login': (context) => const WelcomeScreen(),
+        '/transactions': (context) => const TransactionScreen(),
       },
     );
   }
