@@ -10,11 +10,11 @@ class CustomDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          // Using a Container instead of DrawerHeader to fix the layout issue
+          // Header Section
           Container(
-            width: double.infinity, // Ensures background covers full width
+            width: double.infinity,
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 16, // Accounts for status bar
+              top: MediaQuery.of(context).padding.top + 16,
               left: 16,
               right: 16,
               bottom: 24,
@@ -25,14 +25,13 @@ class CustomDrawer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Back arrow to slide the drawer out
                 IconButton(
                   icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
                   onPressed: () => Navigator.pop(context),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
-                const SizedBox(height: 30), // Space between button and text
+                const SizedBox(height: 30),
                 const Text(
                   'ClubSys App',
                   style: TextStyle(
@@ -48,6 +47,7 @@ class CustomDrawer extends StatelessWidget {
               ],
             ),
           ),
+          
           // Navigation Items
           Expanded(
             child: ListView(
@@ -57,12 +57,14 @@ class CustomDrawer extends StatelessWidget {
                 _buildItem(context, Icons.qr_code_scanner, 'Scan QR', '/qr_scanner'),
                 _buildItem(context, Icons.star_outline, 'Merits', '/merits'),
                 _buildItem(context, Icons.emoji_events_outlined, 'Leader Board', '/leaderboard'),
+                _buildItem(context, Icons.receipt_long_outlined, 'Transactions', '/transactions'),
                 _buildItem(context, Icons.person_outline, 'Profile', '/profile'),
                 _buildItem(context, Icons.shopping_bag_outlined, 'Shop', '/shop'),
                 _buildItem(context, Icons.settings_outlined, 'Settings', '/settings'),
               ],
             ),
           ),
+          
           const Divider(),
           _buildItem(context, Icons.logout, 'Logout', '/login', color: Colors.redAccent),
           const SizedBox(height: 20),
@@ -82,6 +84,7 @@ class CustomDrawer extends StatelessWidget {
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
+      // Using .withValues to stay up to date with Flutter standards
       tileColor: isSelected ? Colors.indigo.withValues(alpha: 0.1) : null,
       onTap: () {
         Navigator.pop(context); 
