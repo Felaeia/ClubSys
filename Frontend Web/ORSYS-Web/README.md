@@ -89,7 +89,7 @@ npm install
 #### Start the development server
 npm run dev
 
-#### Deployment
+## 🚢Deployment
 
 #### Build for production
 npm run build
