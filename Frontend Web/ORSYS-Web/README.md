@@ -15,7 +15,6 @@ Vantage bridges the gap between hardware and software by integrating ESP32 biome
 ## 📂 3. Directory Structure
 
 The project follows a modular architecture to ensure scalability and ease of maintenance:
-![alt text](image.png)
 ```text
 src/
 ├── api/             # Firebase config, Firestore rules, and service functions
@@ -82,18 +81,18 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=your_id
 VITE_FIREBASE_APP_ID=your_app_id
 ```
 
-4. Installation & Local Development
+### 4. Installation & Local Development
 
-# Install dependencies
+#### Install dependencies
 npm install
 
-# Start the development server
+#### Start the development server
 npm run dev
 
-Deployment
+#### Deployment
 
-# Build for production
+#### Build for production
 npm run build
 
-# Deploy to Firebase Hosting
+#### Deploy to Firebase Hosting
 firebase deploy --only hosting
