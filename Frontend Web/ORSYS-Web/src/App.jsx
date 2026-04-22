@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "./firebase";
+import { db } from "./api/firebaseConfig";
 
 function App() {
   const [user, setUser] = useState({
