@@ -12,10 +12,11 @@ Vantage bridges the gap between hardware and software by integrating ESP32 biome
 * **Urgent Communication:** Integrated SMS gateway for critical student announcements.
 * **Role-Based Access Control (RBAC):** Distinct interfaces for Super Admins (Chairman) and Admin (Committee Leaders).
 
-### 📂3. Directory Structure 
+## 📂 3. Directory Structure
 
 The project follows a modular architecture to ensure scalability and ease of maintenance:
-
+![alt text](image.png)
+```text
 src/
 ├── api/             # Firebase config, Firestore rules, and service functions
 ├── assets/          # Images, logos, global styles
@@ -24,16 +25,17 @@ src/
 │   ├── layout/      # Sidebar, Navbar, AdminWrapper
 │   └── features/    # Logic-heavy UI (e.g., AttendanceTable, MeritPanel)
 ├── contexts/        # AuthContext (The heart of Role-Based Access Control)
-├── hooks/           # Custom logic (useFirestore, useBiometrics)
+├── hooks/           # Custom React Hooks (useFirestore, useBiometrics)
 ├── pages/            
 │   ├── super-admin/ # SAO & SSC exclusive views
 │   ├── admin/       # RSO operational views
 │   └── shared/      # Login, 404, Profile
-├── store/           # Zustand for global state management
-└── utils/           # Helpers (Date formatting, XP calculators)
+├── store/           # Zustand state management
+└── utils/           # Helper functions (Date formatting, XP calculators)
+```
 
 ### 🛠 3. Tech Stack
-🛠 Tech Stack
+Tech Stack
 Frontend: React.js (Vite + JavaScript)
 
 Styling: Tailwind CSS v4
@@ -54,7 +56,7 @@ The Vantage project is a collaborative effort by student leaders of the Computer
 | **Manuel Cando** | **Gaming Committee Leader**, CSO | ACLC College of Mandaue |
 
 > **Year & Course:** 3rd Year Bachelor of Science in Computer Science  
-> **Project Scope:** Technopreneurship Feasibility Study 2026
+> **Project Scope:** Technopreneurship Feasibility Study and Software Engineering 2 2026
 
 ---
 
@@ -78,6 +80,7 @@ VITE_FIREBASE_PROJECT_ID=your_project_id
 VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_id
 VITE_FIREBASE_APP_ID=your_app_id
+```
 
 4. Installation & Local Development
 
