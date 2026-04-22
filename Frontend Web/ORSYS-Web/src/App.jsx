@@ -1,8 +1,11 @@
-import React from 'react'
+import TestFirebase from "./TestFirebase"
 
 function App() {
   return (
-    <div>App</div>
+    <div>
+      <h1>ORSYS Web</h1>
+      <TestFirebase />
+    </div>
   )
 }
 
