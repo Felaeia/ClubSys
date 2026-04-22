@@ -1,4 +1,4 @@
-﻿using ClubSys.Domain.Enums;
+using ClubSys.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace ClubSys.Domain.Entities
