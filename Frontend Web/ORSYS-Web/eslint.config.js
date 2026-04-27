@@ -5,9 +5,11 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist']), // Remove 'functions' from here so we can lint it!
+  
+  // --- FRONTEND CONFIG (React) ---
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['src/**/*.{js,jsx}'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -26,4 +28,19 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+
+  // --- BACKEND CONFIG (Firebase Functions) ---
+  {
+    files: ['functions/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'commonjs', // This tells ESLint to expect 'require'
+      globals: {
+        ...globals.node, // This defines 'module', 'require', and 'exports'
+      },
+    },
+    rules: {
+      'no-undef': 'error',
+    },
+  }
 ])

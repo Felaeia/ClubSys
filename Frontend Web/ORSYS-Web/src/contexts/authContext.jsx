@@ -3,28 +3,50 @@ import PropTypes from "prop-types";
 import { AuthContext } from "./AuthContextInstance";
 import { subscribeToAuthChanges, logoutUser } from "../api/services/auth.service";
 import { db } from "../api/firebaseConfig"; 
-import { doc, getDoc } from "firebase/firestore";
+// Added collection, query, where, getDocs for the officer check
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null); // The Firestore data (LastName, Role, etc.)
+  const [profile, setProfile] = useState(null); 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Listen for Auth changes (Login/Logout)
     const unsubscribe = subscribeToAuthChanges(async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
 
         try {
-          // 2. Fetch the Firestore document using the UID
+          // 1. Fetch base profile
           const userDoc = await getDoc(doc(db, "users", currentUser.uid));
           
           if (userDoc.exists()) {
-            // 3. Save the Firestore data (this includes profilePictureUrl!)
-            setProfile(userDoc.data());
+            const userData = userDoc.data();
+            let finalRole = userData.userRole; // Get initial role (student/superAdmin)
+
+            // 2. ORSYS Promotion Logic: If student, check for Officer status
+            if (finalRole === "student") {
+              const membershipsRef = collection(db, "memberships");
+              const q = query(
+                membershipsRef, 
+                where("userId", "==", currentUser.uid), 
+                where("membershipRole", "==", "officer")
+              );
+              
+              const membershipSnap = await getDocs(q);
+              
+              if (!membershipSnap.empty) {
+                finalRole = "admin"; // Promote to admin globally
+                // Optionally attach the groupId if needed for organization-specific data
+                const orgData = membershipSnap.docs[0].data();
+                userData.orgId = orgData.groupId;
+              }
+            }
+
+            // 3. Save the profile with the corrected role
+            setProfile({ ...userData, userRole: finalRole });
           } else {
-            console.warn("No Firestore profile found for this user.");
+            console.warn("No Firestore profile found.");
             setProfile(null);
           }
         } catch (error) {
@@ -32,7 +54,6 @@ export const AuthProvider = ({ children }) => {
           setProfile(null);
         }
       } else {
-        // Clear everything on logout
         setUser(null);
         setProfile(null);
       }
@@ -43,7 +64,6 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // Include 'profile' in the value so Sidebar and Dashboards can use it
   const value = useMemo(() => ({
     user,
     profile, 

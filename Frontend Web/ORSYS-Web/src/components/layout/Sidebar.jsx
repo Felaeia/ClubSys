@@ -17,7 +17,8 @@ import {
   LogOut, 
   ChevronLeft, 
   ChevronRight,
-  UserCircle 
+  UserCircle,
+  Megaphone 
 } from 'lucide-react';
 
 const Sidebar = ({ handleLogout, isCollapsed, setIsCollapsed }) => {
@@ -38,6 +39,7 @@ const Sidebar = ({ handleLogout, isCollapsed, setIsCollapsed }) => {
     superAdmin: [
       { name: 'Admin Profile', path: '/superadmin/profile', icon: <UserCircle size={22} /> },
       { name: 'System Console', path: '/superadmin/superAdminDashboard', icon: <LayoutDashboard size={22} /> },
+      { name: 'Broadcast Center', path: '/superadmin/broadcast', icon: <Megaphone size={22} /> },
       { name: 'Registry', path: '/superadmin/registry', icon: <Landmark size={22} /> },
       { name: 'Game Engine', path: '/superadmin/engine', icon: <Cpu size={22} /> },
       { name: 'Hardware Hub', path: '/superadmin/hardware', icon: <Radio size={22} /> },
