@@ -1,4 +1,4 @@
-# 📘 ClubSys: An IoT-Integrated Organizational Management System
+# 📘 OrgSys: An IoT-Integrated Organizational Management System
 
 **An IoT-Integrated Organizational Management & Visualization System with Multi-Level Governance.**
 
@@ -6,7 +6,7 @@
 
 ## 🚀 Core Philosophy
 
-ClubSys is a centralized web platform designed to digitize the chaotic management of school organizations by solving three specific critical problems:
+OrgSys is a centralized web platform designed to digitize the chaotic management of school organizations by solving three specific critical problems:
 
 1.  **The "Dictator" Problem:** Presidents often act unilaterally.
     *   **Solution: Software-Enforced Democracy.** Critical actions require a 2/3 majority vote from the organization's "Round Table" (Top 3 Heads).
