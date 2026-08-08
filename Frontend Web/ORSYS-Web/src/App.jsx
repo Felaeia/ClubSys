@@ -9,6 +9,8 @@ import LoginPage from "./pages/shared/LoginPage";
 import ForgotPassword from "./pages/shared/ForgotPassword";
 import Unauthorized from "./pages/shared/Unauthorized";
 import NotFound from "./pages/shared/NotFound";
+import AttendanceTerminal from "./pages/shared/AttendanceTerminal";
+import ProfileVerificationView from "./pages/shared/ProfileVerificationView";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -31,6 +33,7 @@ import CreateGroup from './pages/superAdmin/CreateGroup';
 import ConfigureOrganization from "./pages/superAdmin/ConfigureOrganization";
 import ViewOrganization from "./pages/superAdmin/ViewOrganization";
 import AdminUserDetailEditor from "./pages/superAdmin/AdminUserDetailEditor";
+import BroadcastArchives from "./pages/superAdmin/BroadcastArchives";
 function App() {
   return (
     <Router>
@@ -38,8 +41,9 @@ function App() {
         {/* --- PUBLIC ROUTES --- */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
-
+        
         {/* --- PROTECTED CORE --- 
             Ensures the user is logged in before even looking at the layout
         */}
@@ -58,6 +62,8 @@ function App() {
               <Route path="/admin/change-password" element={<ChangePassword />} />
               <Route path="/superadmin/profile" element={<UserProfile />} />
               <Route path="/superadmin/change-password" element={<ChangePassword />} />
+              <Route path="/profile-verification" element={<ProfileVerificationView />} />
+              <Route path="/attendance-terminal" element={<AttendanceTerminal />} />
             </Route>
             
             {/* ADMIN SECTOR
@@ -88,6 +94,7 @@ function App() {
               <Route path="/superadmin/registry/configure/:groupId" element={<ConfigureOrganization />} />
               <Route path="/superadmin/registry/view/:groupId" element={<ViewOrganization />} />
               <Route path="/superadmin/users/edit/:userId" element={<AdminUserDetailEditor />} />
+              <Route path="/superadmin/broadcast-archives" element={<BroadcastArchives />} />
             </Route>
 
           </Route>

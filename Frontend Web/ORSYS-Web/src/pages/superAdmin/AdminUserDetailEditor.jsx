@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types'; // Added for prop validation
+import PropTypes from 'prop-types';
 import { db } from '../../api/firebaseConfig';
-import { doc, collection, onSnapshot, updateDoc, getDocs, query, where } from 'firebase/firestore';
+// Removed updateDoc from imports as we are using writeBatch for atomic updates
+import { doc, collection, onSnapshot, getDocs, query, where, writeBatch } from 'firebase/firestore';
 import { 
   User, Layers, Shield, Fingerprint, Save, 
   ChevronLeft, AlertCircle, CheckCircle2, Loader2,
-  IdCard, Activity, Database
+  IdCard, Activity, Database, Key
 } from 'lucide-react';
 
 const AdminUserDetailEditor = ({ userId, onBack }) => {
@@ -46,9 +47,20 @@ const AdminUserDetailEditor = ({ userId, onBack }) => {
     e.preventDefault();
     setSaving(true);
     try {
+      const batch = writeBatch(db);
+      
+      // 1. Update Core User Document
       const userRef = doc(db, 'users', userId);
-      await updateDoc(userRef, userData);
-      setStatus({ type: 'success', msg: 'Personnel records updated successfully.' });
+      batch.update(userRef, userData);
+
+      // 2. Update Memberships (Roles)
+      memberships.forEach((m) => {
+        const mRef = doc(db, 'memberships', m.id);
+        batch.update(mRef, { membershipRole: userData.userRole });
+      });
+
+      await batch.commit();
+      setStatus({ type: 'success', msg: 'Personnel records and access levels updated.' });
     } catch (err) {
       setStatus({ type: 'error', msg: err.message });
     } finally {
@@ -82,6 +94,7 @@ const AdminUserDetailEditor = ({ userId, onBack }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="space-y-6">
+          {/* PROFILE CARD */}
           <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 text-center backdrop-blur-xl">
             <div className="relative inline-block">
               <div className="h-32 w-32 rounded-[2.5rem] bg-slate-900 border-2 border-blue-500/30 overflow-hidden mx-auto">
@@ -112,6 +125,7 @@ const AdminUserDetailEditor = ({ userId, onBack }) => {
             </div>
           </div>
 
+          {/* MEMBERSHIPS LIST */}
           <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6">
             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
               <Layers size={14} /> Active Memberships
@@ -200,16 +214,20 @@ const AdminUserDetailEditor = ({ userId, onBack }) => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="xpOverride" className="text-[10px] font-black text-slate-500 uppercase ml-2 text-amber-500">Administrative XP Override</label>
+                <label htmlFor="userRole" className="text-[10px] font-black text-blue-500 uppercase ml-2">System Access Level</label>
                 <div className="relative">
-                  <Activity className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-600/50" size={16} />
-                  <input 
-                    id="xpOverride"
-                    type="number" 
-                    value={userData?.aclcXp || 0} 
-                    onChange={(e) => setUserData({...userData, aclcXp: Number.parseInt(e.target.value, 10)})}
-                    className="w-full bg-amber-500/5 border border-amber-500/20 rounded-xl py-3 pl-12 pr-4 text-amber-400 text-sm focus:border-amber-500 outline-none"
-                  />
+                  <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-600/50" size={16} />
+                  <select 
+                    id="userRole"
+                    value={userData?.userRole || 'student'} 
+                    onChange={(e) => setUserData({...userData, userRole: e.target.value})}
+                    className="w-full bg-blue-500/5 border border-blue-500/20 rounded-xl py-3 pl-12 pr-4 text-blue-400 text-sm focus:border-blue-500 outline-none cursor-pointer"
+                  >
+                    <option value="student">Student (Standard)</option>
+                    <option value="teacher">Teacher / Faculty</option>
+                    <option value="admin">Administrator</option>
+                    <option value="superAdmin">Super Administrator</option>
+                  </select>
                 </div>
               </div>
 
@@ -223,6 +241,20 @@ const AdminUserDetailEditor = ({ userId, onBack }) => {
                     value={userData?.rank || ''} 
                     onChange={(e) => setUserData({...userData, rank: e.target.value})}
                     className="w-full bg-[#020617] border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white text-sm focus:border-blue-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label htmlFor="xpOverride" className="text-[10px] font-black text-slate-500 uppercase ml-2 text-amber-500">Administrative XP Override</label>
+                <div className="relative">
+                  <Activity className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-600/50" size={16} />
+                  <input 
+                    id="xpOverride"
+                    type="number" 
+                    value={userData?.aclcXp || 0} 
+                    onChange={(e) => setUserData({...userData, aclcXp: Number.parseInt(e.target.value, 10)})}
+                    className="w-full bg-amber-500/5 border border-amber-500/20 rounded-xl py-3 pl-12 pr-4 text-amber-400 text-sm focus:border-amber-500 outline-none"
                   />
                 </div>
               </div>
@@ -245,7 +277,6 @@ const AdminUserDetailEditor = ({ userId, onBack }) => {
   );
 };
 
-// Fixed S6774: Proper prop validation
 AdminUserDetailEditor.propTypes = {
   userId: PropTypes.string.isRequired,
   onBack: PropTypes.func.isRequired,

@@ -1,33 +1,100 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { db, storage } from '../../api/firebaseConfig';
+import { doc, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { 
   User, 
   ShieldCheck, 
   Camera,
-  Loader2
-} from 'lucide-react'; // Removed 'Award' to fix S1128
+  Loader2,
+  Edit3,
+  Save,
+  XCircle,
+  CheckCircle2
+} from 'lucide-react';
 import { motion } from 'framer-motion';
+
+// Import sub-components from the new file
+import { DataRow, Badge, StatBox } from './UserProfileComponents';
 
 const MotionDiv = motion.div;
 
 const UserProfile = () => {
-  const { profile, loading } = useAuth();
+  const { profile, loading, user } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState(null);
+  const [status, setStatus] = useState({ type: '', msg: '' });
+  
+  const fileInputRef = useRef(null);
 
-  // Helper to handle empty values and Firebase Timestamps
+  const toggleEdit = () => {
+    if (isEditing) {
+      setIsEditing(false);
+      setFormData(null);
+    } else {
+      setFormData({ ...profile });
+      setIsEditing(true);
+    }
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      setStatus({ type: 'error', msg: 'Image must be under 2MB' });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const storageRef = ref(storage, `avatars/${user.uid}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        profilePictureUrl: downloadURL,
+        hasProfilePic: true
+      });
+
+      setStatus({ type: 'success', msg: 'Profile picture updated!' });
+    } catch (err) {
+      setStatus({ type: 'error', msg: 'Upload failed: ' + err.message });
+    } finally {
+      setSaving(false);
+      setTimeout(() => setStatus({ type: '', msg: '' }), 3000);
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, formData);
+      setStatus({ type: 'success', msg: 'Profile updated successfully!' });
+      setIsEditing(false);
+      setFormData(null);
+    } catch (err) {
+      setStatus({ type: 'error', msg: 'Update failed: ' + err.message });
+    } finally {
+      setSaving(false);
+      setTimeout(() => setStatus({ type: '', msg: '' }), 3000);
+    }
+  };
+
   const renderValue = (value, fallback = "---") => {
     if (value === undefined || value === null || value === "") {
       return <span className="text-slate-600 italic">{fallback}</span>;
     }
-    
     if (typeof value === 'object' && value.toDate) {
       return value.toDate().toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric'
+        month: 'long', day: 'numeric', year: 'numeric'
       });
     }
-    
     return value;
   };
 
@@ -35,21 +102,64 @@ const UserProfile = () => {
     return (
       <div className="flex h-[60vh] w-full flex-col items-center justify-center space-y-4">
         <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
-          Syncing Vantage Profile...
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 text-center">
+            Synchronizing Vanguard Systems...
         </p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-20 animate-in fade-in duration-700">
-      
+    <form onSubmit={handleUpdate} className="max-w-6xl mx-auto space-y-6 pb-20 animate-in fade-in duration-700">
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleImageChange} 
+        className="hidden" 
+        accept="image/*"
+      />
+
+      {/* HEADER CONTROLS */}
+      <div className="flex justify-end items-center gap-4">
+        {status.msg && (
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] font-bold uppercase tracking-tighter ${
+              status.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'
+            }`}
+          >
+            {status.type === 'success' ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
+            {status.msg}
+          </motion.div>
+        )}
+        
+        <button 
+          type="button"
+          onClick={toggleEdit}
+          className={`flex items-center gap-2 px-6 py-2 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${
+            isEditing ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20' : 'bg-blue-600 text-white hover:bg-blue-500'
+          }`}
+        >
+          {isEditing ? <><XCircle size={16} /> Cancel</> : <><Edit3 size={16} /> Edit Profile</>}
+        </button>
+
+        {isEditing && (
+          <button 
+            type="submit"
+            disabled={saving}
+            className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-500 disabled:opacity-50"
+          >
+            {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+            Save Changes
+          </button>
+        )}
+      </div>
+
       {/* IDENTITY & RANK CARD */}
       <section className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 backdrop-blur-xl shadow-2xl relative">
         <div className="flex flex-col md:flex-row gap-10 items-center">
           <div className="relative group">
-            <div className="w-44 h-44 rounded-[2.5rem] border-4 border-blue-600/20 overflow-hidden bg-slate-900 shadow-2xl transition-transform duration-500">
+            <div className="w-44 h-44 rounded-[2.5rem] border-4 border-blue-600/20 overflow-hidden bg-slate-900 shadow-2xl">
                <img 
                  src={profile?.hasProfilePic ? profile.profilePictureUrl : 'https://via.placeholder.com/150'} 
                  alt="Profile" 
@@ -58,9 +168,11 @@ const UserProfile = () => {
             </div>
             <button 
               type="button"
-              className="absolute -bottom-2 -right-2 p-4 bg-blue-600 rounded-2xl text-white shadow-xl hover:scale-110 active:scale-90 transition-all"
+              onClick={() => fileInputRef.current.click()}
+              disabled={saving}
+              className="absolute -bottom-2 -right-2 p-4 bg-blue-600 rounded-2xl text-white shadow-xl hover:scale-110 active:scale-90 transition-all disabled:opacity-50"
             >
-              <Camera size={20} />
+              {saving ? <Loader2 size={20} className="animate-spin" /> : <Camera size={20} />}
             </button>
           </div>
 
@@ -73,7 +185,6 @@ const UserProfile = () => {
                   {renderValue(profile?.course)} • {renderValue(profile?.yearLevel, "Year Pending")}
                 </p>
              </div>
-
              <div className="flex flex-wrap justify-center md:justify-start gap-3">
                 <Badge label={profile?.userRole || 'Member'} color="blue" />
                 <Badge label={`HOUSE: ${profile?.houseId || 'NONE'}`} color="purple" />
@@ -95,12 +206,36 @@ const UserProfile = () => {
               <User size={18} className="text-blue-500" /> Identity Credentials
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-              <DataRow label="First Name" value={renderValue(profile?.firstName)} />
-              <DataRow label="Last Name" value={renderValue(profile?.lastName)} />
-              <DataRow label="Middle Name" value={renderValue(profile?.middleName)} />
-              <DataRow label="Student ID" value={renderValue(profile?.studentId)} />
-              <DataRow label="Date of Birth" value={renderValue(profile?.dateOfBirth)} />
-              <DataRow label="Email" value={profile?.email} isFullWidth />
+              <DataRow 
+                label="First Name" 
+                value={isEditing ? formData?.firstName : profile?.firstName} 
+                isEditing={isEditing}
+                onChange={(v) => setFormData({...formData, firstName: v})}
+              />
+              <DataRow 
+                label="Last Name" 
+                value={isEditing ? formData?.lastName : profile?.lastName} 
+                isEditing={isEditing}
+                onChange={(v) => setFormData({...formData, lastName: v})}
+              />
+              <DataRow 
+                label="Middle Name" 
+                value={isEditing ? formData?.middleName : profile?.middleName} 
+                isEditing={isEditing}
+                onChange={(v) => setFormData({...formData, middleName: v})}
+              />
+              <DataRow 
+                label="Student ID" 
+                value={isEditing ? formData?.studentId : profile?.studentId} 
+                isEditing={isEditing}
+                onChange={(v) => setFormData({...formData, studentId: v})}
+              />
+              <DataRow 
+                label="Date of Birth" 
+                value={isEditing ? formData?.dateOfBirth : renderValue(profile?.dateOfBirth)} 
+                isEditing={isEditing}
+                onChange={(v) => setFormData({...formData, dateOfBirth: v})}
+              />
             </div>
           </div>
         </MotionDiv>
@@ -111,10 +246,7 @@ const UserProfile = () => {
               <ShieldCheck size={18} className="text-emerald-500" /> Hardware Sync
             </h3>
             <div className="space-y-6">
-              <DataRow 
-                label="Biometric Status" 
-                value={profile?.isBiometricRegistered ? "🟢 ACTIVE" : "🔴 UNLINKED"} 
-              />
+              <DataRow label="Biometric Status" value={profile?.isBiometricRegistered ? "🟢 ACTIVE" : "🔴 UNLINKED"} />
               <DataRow label="Biometric ID" value={renderValue(profile?.biometricId, "0000")} />
               
               <div className="pt-4 border-t border-white/5">
@@ -127,58 +259,8 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
-};
-
-// --- VALIDATED SUB-COMPONENTS ---
-
-const Badge = ({ label, color }) => {
-  const colors = {
-    blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    purple: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-    emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-  };
-  return (
-    <span className={`px-4 py-1.5 rounded-xl border text-[10px] font-black uppercase tracking-widest ${colors[color]}`}>
-      {label}
-    </span>
-  );
-};
-
-// FIX: S6774 Props Validation for Badge
-Badge.propTypes = {
-  label: PropTypes.string.isRequired,
-  color: PropTypes.oneOf(['blue', 'purple', 'emerald']).isRequired
-};
-
-const StatBox = ({ label, value, color }) => (
-  <div className="bg-[#020617] p-5 rounded-[2rem] border border-white/5 text-center min-w-[140px]">
-    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">{label}</p>
-    <p className={`text-3xl font-black ${color}`}>{value}</p>
-  </div>
-);
-
-// FIX: S6774 Props Validation for StatBox
-StatBox.propTypes = {
-  label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node]).isRequired,
-  color: PropTypes.string.isRequired
-};
-
-const DataRow = ({ label, value, isFullWidth = false }) => (
-  <div className={`space-y-1.5 ${isFullWidth ? 'md:col-span-2' : ''}`}>
-    <span className="block text-[10px] text-slate-500 font-black uppercase tracking-wider">{label}</span>
-    <div className="text-sm text-slate-200 font-bold bg-[#020617] p-4 rounded-2xl border border-white/5 truncate">
-      {value}
-    </div>
-  </div>
-);
-
-DataRow.propTypes = {
-  label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node]),
-  isFullWidth: PropTypes.bool
 };
 
 export default UserProfile;
