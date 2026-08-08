@@ -435,7 +435,21 @@ dist-ssr
 *.sw?
 
 *.sln
-# iOS generated build files
+# Flutter ephemeral directory
+**/macos/Flutter/ephemeral/
 **/ios/Flutter/ephemeral/
+**/linux/Flutter/ephemeral/
+**/windows/Flutter/ephemeral/
+
+# Flutter generated plugin registrant files
 Frontend Mobile/ios/Flutter/flutter_export_environment.sh
 Frontend Mobile/ios/Flutter/Generated.xcconfig
+Frontend Mobile/ios/Runner/GeneratedPluginRegistrant.m
+Frontend Mobile/ios/Runner/GeneratedPluginRegistrant.h
+Frontend Mobile/linux/flutter/generated_plugin_registrant.cc
+Frontend Mobile/linux/flutter/generated_plugin_registrant.h
+Frontend Mobile/linux/flutter/generated_plugins.cmake
+Frontend Mobile/macos/Flutter/GeneratedPluginRegistrant.swift
+Frontend Mobile/windows/flutter/generated_plugin_registrant.cc
+Frontend Mobile/windows/flutter/generated_plugin_registrant.h
+Frontend Mobile/windows/flutter/generated_plugins.cmake
